@@ -45,7 +45,7 @@ export class WorkflowService {
 ![image][1]
 Từ hình ảnh trên chúng ta có thể thấy rõ luồng hoạt động chung của kiến trúc được diễn ra như sau:
 
-Tác nhân $\rightarrow$ Nơi tiếp nhận input $\rightarrow$ Lõi (Core)$\rightarrow$ Lớp Domain $\rightarrow$ Cổng (Ports) $\rightarrow$ Thành phần bên ngoài (Adapters)
+Tác nhân $\rightarrow$ Nơi tiếp nhận input $\rightarrow$ Lõi (Core) $\rightarrow$ Lớp Domain $\rightarrow$ Cổng (Ports) $\rightarrow$ Thành phần bên ngoài (Adapters)
 
 Như vậy các components chính sẽ có là:
 - Nơi tiếp nhận input:
