@@ -3,11 +3,11 @@
 ## Tác giả: Triệu Cao Tấn
 
 ## Mục lục
-- **Hexagonal Arrchitecture**:
+- **Hexagonal Architecture**:
     - **Cấu tạo và các quy định của kiến trúc** - **Core Regulations**
     - **Ưu và nhược điểm** - **Benefits and Drawbacks**
     - **Các ca sử dụng của kiến trúc** - **When it's available to apply**
-    - **So sánh với các kiến chủ khác**
+    - **So sánh với các kiến trúc khác**
 - **Quá trình sử dụng AI cho chủ đề**
 
 ### 1. Hexagonal Architecture
@@ -50,7 +50,7 @@ Tác nhân $\rightarrow$ Nơi tiếp nhận input $\rightarrow$ Lõi (Core) $\ri
 Như vậy các components chính sẽ có là:
 - Nơi tiếp nhận input:
     - Bộ phận cấu thành: Controllers (HTTP, Event, CLI)
-    - Nhiệm vụ: tiếp nhận các request từ actor, xử lý chúng và gửi đên core
+    - Nhiệm vụ: tiếp nhận các request từ actor, xử lý chúng và gửi đến core
 ```bash
 // Ví dụ: HTTP Controller
 app.post("/users", async (req, res) => {
@@ -61,7 +61,7 @@ app.post("/users", async (req, res) => {
 ```
 - Lõi:
     - Bộ phận cấu thành: Các công cụ xử lý: Command, Queries, ...
-    - Nhiệm vụ: điều phối các requests để domain services, đảm bảo tính đọc lập của core, giao tiếp với bên ngoài thông qua Ports
+    - Nhiệm vụ: điều phối các requests để domain services, đảm bảo tính độc lập của core, giao tiếp với bên ngoài thông qua Ports
 ```bash
 // Ví dụ
 class CreateUserUseCase {
@@ -124,15 +124,15 @@ class PrismaUserRepository implements UserRepository {
 #### Ưu điểm và nhược điểm:
 
 ##### Ưu điểm:
-- Tách được logic: bảo vệ logic quản trị của hệ thóng khỏi các thông số, yêu tố dặc biệt của các adapters
+- Tách được logic: bảo vệ logic quản trị của hệ thống khỏi các thông số, yếu tố đặc biệt của các adapters
 - Hệ thống không cần phụ thuộc vào mô hình: có thể sử dụng các mô hình chất lượng hơn theo thời gian mà không ảnh hưởng đến logic lõi
 - Cải thiện khả năng test: dễ dàng hơn trong việc debug, phân loại và xác định nhanh chóng hơn lỗi xảy ra ở đâu
 - Tăng năng suất: các thành viên trong team hoặc giữa các teams có thể tự do làm việc độc lập
 
 ##### Nhược điểm: 
-- Tăng độ phực tạp: yêu cầu nhiều hơn các lớp trung gian và code lặp tăng cao từ khi khỏi tạo dự án
+- Tăng độ phức tạp: yêu cầu nhiều hơn các lớp trung gian và code lặp tăng cao từ khi khởi tạo dự án
 - Yêu cầu phải hiểu biết: mức độ hiểu biết phải cao, tránh được vi phạm và code nhầm files
-- Chất lượng hệ thống: độ phức tạp tăng đồng nghĩa với việc các lớp trung gian được sử dụng cũng tẳng -> tăng độ trễ (increase latency)
+- Chất lượng hệ thống: độ phức tạp tăng đồng nghĩa với việc các lớp trung gian được sử dụng tăng -> tăng độ trễ (increase latency)
 
 #### Các ca sử dụng của kiến trúc
 
@@ -142,11 +142,11 @@ class PrismaUserRepository implements UserRepository {
     - Lợi ích: Cho phép việc kiểm thử mà không cần gọi model (test business logic)
 
 - Điều phối các AI trong workflow
-    - Tình huống:Luồng AI nhiều bước, yêu cầu nhiều vấn đề từ phướng án dự phòng (fallback), trình tự cụ thể.
+    - Tình huống:Luồng AI nhiều bước, yêu cầu nhiều vấn đề từ phương án dự phòng (fallback), trình tự cụ thể.
     - Ví dụ: Các nội dung đưa vào -> RAG -> Đánh giá điểm
     - Lợi ích: Luồng làm việc được bảo vệ, các model có thể thay thế 
 
-- Hệ thống sự dụng AI những không phụ thuộc nhà phát triển:
+- Hệ thống sử dụng AI những không phụ thuộc nhà phát triển:
     - Luồng chính giúp quản trị hệ thống cần phải được giữ ổn định trong thời điểm AI thay đổi nhanh chóng.
     - Ví dụ: LLMs, Đánh giá hoặc test hệ thống
     - Lợi ích: dễ dàng sử dụng, áp các các chức năng của AI vào khuôn khổ; Adapters thì giúp ngăn cản hành vi của từng infra ảnh hưởng tới lõi.
@@ -159,7 +159,7 @@ class PrismaUserRepository implements UserRepository {
 
 ### 2. Quá trình sử dụng AI cho chủ đề
 #### 2.1 Layered Questioning
-- Ngay từ khi bắt đầu, tôi dã thực hiện với việc tìm kiếm các kết quả từ Google để có một cái nhìn tổng quan về hệ thống. Sau đó thì sử dụng AI để thực hiện tìm kiếm các thống tin, yếu tố được nêu ở trong file Overview Tuần 1. Bên cạnh đó thì tôi cũng tự đưa ra thêm các ví dụ và sử dụng các ví dụ từ AI để kiểm soát và trải nghiệm chủ quan với kiến trúc. Để kiểm tra độ hiêu biết và tránh được "ảo giác" của AI, tôi sử dụng thêm hai nguồn nữa là [GeekForGeeks][2] và [StackOverflow][3] để đưa ra các quan điểm đối lập với các luận điểm mà AI trả về cho tôi.
+- Ngay từ khi bắt đầu, tôi đã thực hiện với việc tìm kiếm các kết quả từ Google để có một cái nhìn tổng quan về hệ thống. Sau đó thì sử dụng AI để thực hiện tìm kiếm các thông tin, yếu tố được nêu ở trong file Overview Tuần 1. Bên cạnh đó thì tôi cũng tự đưa ra thêm các ví dụ và sử dụng các ví dụ từ AI để kiểm soát và trải nghiệm chủ quan với kiến trúc. Để kiểm tra độ hiểu biết và tránh được "ảo giác" của AI, tôi sử dụng thêm hai nguồn nữa là [GeekForGeeks][2] và [StackOverflow][3] để đưa ra các quan điểm đối lập với các luận điểm mà AI trả về cho tôi.
 #### 2.2 Solution Exploration
 - Quy trình làm việc được triển khai rất nhiều ở phần mà tôi đã nghiên cứu về sự so sánh giữa kiến trúc hình lục giác và các kiến trúc khác. Dựa trên bối cảnh cấu trúc, tôi đã tìm ra những yếu tố khác nhau tạo nên thẩm quyền kiến ​​trúc.
 #### 2.3 Iterative Refinement
