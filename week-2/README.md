@@ -41,3 +41,17 @@ program
         - cli tool: short-lived process (tiến trình chạy rồi nghỉ): config: đường dẫn, phân tích tham số, dòng lệnh (bash programming maybe); lifecycle: Khởi tạo -> kết nối source -> Xử lý yêu cầu -> Ngắt kết nối -> Thoát
         
 - Note: trong Hexagonal: CLI Adapters chuyển Command Arguments -> Object: trong ví dụ *ticket update 1 --status "done"* -> muốn đổi '--status' thành '--state' -> chỉ cần sửa tại Adapter -> Core giữ nguyên (business rule: theo nguyên tắc -> không thay đổi)
+
+
+Một hệ thống áp dụng kiến trúc Hexagonal - như vậy tổng kết lại:
+src
+- application:
+  - ports: inbound ports (in -> out(use case))/ outbound ports(out -> in: database)
+- domain:
+  - entity:
+  - value-objects:
+  - service:
+- infrastructure:
+  - adapter: persistence + ui
+  - dependency injection
+  
