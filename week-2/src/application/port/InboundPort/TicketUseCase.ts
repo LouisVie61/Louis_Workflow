@@ -3,6 +3,7 @@ import { StatusTicket } from '../../../domain/ValueObjects/StatusTicket';
 import { PriorityTicket } from '../../../domain/ValueObjects/PriorityTicket';
 import { TicketRepository } from '../OutboundPort/TicketRepository';
 import { TicketService } from '../../../domain/Services/TicketService';
+import { Tag } from '../../../domain/ValueObjects/TagTicket';
 
 export class TicketUseCase {
     private ticketService: TicketService;
@@ -16,9 +17,9 @@ export class TicketUseCase {
         description: string,
         status: StatusTicket,
         priority: PriorityTicket,
-        tags: string[]
+        tags: Tag[]
     ): Ticket {
-        this.ticketService.createTicket(id, description, status, priority, tags);
+        this.ticketService.createTicket(description, status, priority, tags);
         return this.ticketService.filterTickets(id)[0];
     }
 
@@ -26,7 +27,7 @@ export class TicketUseCase {
         id: number,
         status?: StatusTicket,
         priority?: PriorityTicket,
-        tags?: string[]
+        tags?: Tag[]
     ): Ticket[] {
         return this.ticketService.filterTickets(id, status, priority, tags);
     }

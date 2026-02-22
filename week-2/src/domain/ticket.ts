@@ -1,6 +1,7 @@
 // src/domain/ticket.ts
 import { StatusTicket } from './ValueObjects/StatusTicket';
 import { PriorityTicket } from './ValueObjects/PriorityTicket';
+import { Tag } from './ValueObjects/TagTicket';
 
 export class Ticket {
     private _id: number;
@@ -8,7 +9,7 @@ export class Ticket {
     private _description: string;
     private _status: StatusTicket;
     private _priority: PriorityTicket;
-    private _tags: string[];
+    private _tags: Tag[];
 
     constructor(
         id: number, 
@@ -16,7 +17,7 @@ export class Ticket {
         description: string, 
         status: StatusTicket, 
         priority: PriorityTicket, 
-        tags: string[]
+        tags: Tag[]
     ) {
         this.validateId(id);
         this.validateDescription(description);
@@ -34,7 +35,7 @@ export class Ticket {
     get description(): string { return this._description; }
     get status(): StatusTicket { return this._status; }
     get priority(): PriorityTicket { return this._priority; }
-    get tags(): string[] { return [...this._tags]; }
+    get tags(): Tag[] { return [...this._tags]; }
 
     updateStatus(newStatus: StatusTicket): void {
         if (this._status.getValue() === StatusTicket.CLOSED && newStatus.getValue() === StatusTicket.OPEN) {
@@ -47,25 +48,25 @@ export class Ticket {
         this._priority = newPriority;
     }
 
-    addTag(tag: string): void {
-        if (this._tags.indexOf(tag) === -1) {
+    addTag(tag: Tag): void {
+        if (!this._tags.some(t => t.equals(tag))) {
             this._tags.push(tag);
         }
     }
 
-    removeTag(tag: string): void {
-        this._tags = this._tags.filter(t => t !== tag);
+    removeTag(tag: Tag): void {
+        this._tags = this._tags.filter(t => !t.equals(tag));
     }
 
     hasTag(tag: string): boolean {
-        return this._tags.indexOf(tag) !== -1;
+        return this._tags.some(t => t.getValue() === tag);
     }
 
-    matchesFilters(status?: StatusTicket, priority?: PriorityTicket, tags?: string[]): boolean {
+    matchesFilters(status?: StatusTicket, priority?: PriorityTicket, tags?: Tag[]): boolean {
         if (status && this._status.getValue() !== status.getValue()) return false;
         if (priority && !this._priority.equals(priority)) return false;
         if (tags && tags.length > 0) {
-            const hasAllTags = tags.every(tag => this._tags.indexOf(tag) !== -1);
+            const hasAllTags = tags.every(tag => this._tags.some(t => t.equals(tag)));
             if (!hasAllTags) return false;
         }
         return true;

@@ -2,22 +2,23 @@ import { Ticket } from '../ticket';
 import { StatusTicket } from '../ValueObjects/StatusTicket';
 import { PriorityTicket } from '../ValueObjects/PriorityTicket';
 import { TicketRepository } from '../../application/port/OutboundPort/TicketRepository';
+import { Tag } from '../ValueObjects/TagTicket';
 
 export class TicketService {
     constructor(private readonly ticketRepository: TicketRepository) {}
 
     createTicket(
-        id: number,
         description: string,
         status: StatusTicket,
         priority: PriorityTicket,
-        tags: string[]
+        tags: Tag[]
     ): void {
+        const id = this.ticketRepository.findAll().length + 1;
         const title = `Ticket #${id}`;
         const ticket = new Ticket(id, title, description, status, priority, tags);
 
         if (priority.getValue() === PriorityTicket.HIGH && !ticket.hasTag('urgent')) {
-            ticket.addTag('urgent');
+            ticket.addTag(new Tag('urgent'));
         }
 
         this.ticketRepository.save(ticket);
@@ -27,7 +28,7 @@ export class TicketService {
         id: number,
         status?: StatusTicket,
         priority?: PriorityTicket,
-        tags?: string[]
+        tags?: Tag[]
     ): Ticket[] {
         const ticket = this.ticketRepository.findById(id);
         if (ticket === null) {
