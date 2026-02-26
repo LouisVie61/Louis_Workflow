@@ -24,8 +24,4 @@ export class PriorityTicket {
         const priorityOrders = ['LOW', 'MEDIUM', 'HIGH'];
         return priorityOrders.indexOf(this.value) > priorityOrders.indexOf(other.getValue());
     }
-
-    toString(): string {
-        return this.value;
-    }
 }
