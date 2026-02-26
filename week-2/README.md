@@ -7,9 +7,6 @@ cd week-2
 npm install
 ```
 
-## Configuration
-
-Tickets are stored in `tickets.json` at project root (auto-created on first run).
 
 ## Usage
 
