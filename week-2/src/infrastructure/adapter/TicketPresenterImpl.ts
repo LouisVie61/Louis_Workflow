@@ -1,22 +1,22 @@
 import { TicketPresenters } from "../../application/port/OutboundPort/TicketPresenters";
-import { Ticket } from "../../domain/ticket";
+import { TicketDTO } from "../../application/dto/TicketDTO";
 
 export class TicketPresenterImpl implements TicketPresenters {
-  presentTicketList(tickets: Ticket[]): string {
+  presentTicketList(tickets: TicketDTO[]): string {
     if (tickets.length === 0) return "No tickets found.";
     return tickets
-      .map(t => `[${t.id}] ${t.title} | ${t.status.getValue()} | ${t.priority.getValue()}`)
+      .map(t => `[${t.id}] ${t.title} | ${t.status} | ${t.priority}`)
       .join("\n");
   }
 
-  presentTicketDetail(ticket: Ticket): string {
+  presentTicketDetail(ticket: TicketDTO): string {
     return [
       `ID: ${ticket.id}`,
       `Title: ${ticket.title}`,
       `Description: ${ticket.description}`,
-      `Status: ${ticket.status.getValue()}`,
-      `Priority: ${ticket.priority.getValue()}`,
-      `Tags: ${ticket.tags.map(t => t.getValue()).join(", ") || "none"}`,
+      `Status: ${ticket.status}`,
+      `Priority: ${ticket.priority}`,
+      `Tags: ${ticket.tags.join(", ") || "none"}`,
     ].join("\n");
   }
 

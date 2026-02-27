@@ -1,4 +1,5 @@
 import { TicketUseCase } from './port/InboundPort/TicketUseCase';
+import { TicketDTO } from './dto/TicketDTO';
 import { Ticket } from '../domain/ticket';
 import { StatusTicket } from '../domain/ValueObjects/StatusTicket';
 import { PriorityTicket } from '../domain/ValueObjects/PriorityTicket';
@@ -12,7 +13,18 @@ export class TicketUseCaseImpl implements TicketUseCase {
         private readonly ticketService: TicketService
     ) {}
 
-    async createTicket(title: string, description: string, status: string, priority: string, tags: string[]): Promise<Ticket> {
+    private toDTO(ticket: Ticket): TicketDTO {
+        return {
+            id: ticket.id,
+            title: ticket.title,
+            description: ticket.description,
+            status: ticket.status.getValue(),
+            priority: ticket.priority.getValue(),
+            tags: ticket.tags.map(t => t.getValue()),
+        };
+    }
+
+    async createTicket(title: string, description: string, status: string, priority: string, tags: string[]): Promise<TicketDTO> {
         const allTickets = await this.ticketRepository.findAll();
         const id = this.ticketService.generateId(allTickets);
         const ticket = new Ticket(
@@ -23,23 +35,23 @@ export class TicketUseCaseImpl implements TicketUseCase {
         );
         this.ticketService.applyBusinessRules(ticket);
         await this.ticketRepository.create(ticket);
-        return ticket;
+        return this.toDTO(ticket);
     }
 
-    async filterTickets(status?: string, priority?: string, tags?: string[]): Promise<Ticket[]> {
+    async filterTickets(status?: string, priority?: string, tags?: string[]): Promise<TicketDTO[]> {
         const allTickets = await this.ticketRepository.findAll();
         return this.ticketService.filterTickets(
             allTickets,
             status ? new StatusTicket(status) : undefined,
             priority ? new PriorityTicket(priority) : undefined,
             tags ? tags.map(t => new Tag(t)) : undefined
-        );
+        ).map(t => this.toDTO(t));
     }
 
-    async findTicketById(id: number): Promise<Ticket> {
+    async findTicketById(id: number): Promise<TicketDTO> {
         const ticket = await this.ticketRepository.findById(id);
         if (!ticket) throw new Error(`Ticket #${id} not found`);
-        return ticket;
+        return this.toDTO(ticket);
     }
 
     async updateTicket(id: number, status?: string, priority?: string): Promise<void> {
@@ -50,7 +62,8 @@ export class TicketUseCaseImpl implements TicketUseCase {
         await this.ticketRepository.update(ticket);
     }
 
-    async listAllTickets(): Promise<Ticket[]> {
-        return this.ticketRepository.findAll();
+    async listAllTickets(): Promise<TicketDTO[]> {
+        const tickets = await this.ticketRepository.findAll();
+        return tickets.map(t => this.toDTO(t));
     }
 }
