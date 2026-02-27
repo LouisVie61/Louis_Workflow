@@ -2,7 +2,7 @@ import { TicketService } from '../../src/domain/Services/TicketService';
 import { StatusTicket } from '../../src/domain/ValueObjects/StatusTicket';
 import { PriorityTicket } from '../../src/domain/ValueObjects/PriorityTicket';
 import { Tag } from '../../src/domain/ValueObjects/TagTicket';
-import { Ticket } from '../../src/domain/ticket';
+import { Ticket } from '../../src/domain/entity/ticket';
 
 describe('TicketService (pure domain)', () => {
   let service: TicketService;

@@ -1,6 +1,6 @@
-import { StatusTicket } from './ValueObjects/StatusTicket';
-import { PriorityTicket } from './ValueObjects/PriorityTicket';
-import { Tag } from './ValueObjects/TagTicket';
+import { StatusTicket } from '../ValueObjects/StatusTicket';
+import { PriorityTicket } from '../ValueObjects/PriorityTicket';
+import { Tag } from '../ValueObjects/TagTicket';
 
 export class Ticket {
     private _id: number;

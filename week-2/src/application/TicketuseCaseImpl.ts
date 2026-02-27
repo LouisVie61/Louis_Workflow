@@ -1,6 +1,6 @@
 import { TicketUseCase } from './port/InboundPort/TicketUseCase';
 import { TicketDTO } from './dto/TicketDTO';
-import { Ticket } from '../domain/ticket';
+import { Ticket } from '../domain/entity/ticket';
 import { StatusTicket } from '../domain/ValueObjects/StatusTicket';
 import { PriorityTicket } from '../domain/ValueObjects/PriorityTicket';
 import { Tag } from '../domain/ValueObjects/TagTicket';

@@ -1,7 +1,7 @@
 import * as fs from 'fs';
 import * as path from 'path';
 import { TicketRepository } from '../../application/port/OutboundPort/TicketRepository';
-import { Ticket } from '../../domain/ticket';
+import { Ticket } from '../../domain/entity/ticket';
 import { StatusTicket } from '../../domain/ValueObjects/StatusTicket';
 import { PriorityTicket } from '../../domain/ValueObjects/PriorityTicket';
 import { Tag } from '../../domain/ValueObjects/TagTicket';

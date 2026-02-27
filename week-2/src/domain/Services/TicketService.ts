@@ -1,4 +1,4 @@
-import { Ticket } from '../ticket';
+import { Ticket } from '../entity/ticket';
 import { StatusTicket } from '../ValueObjects/StatusTicket';
 import { PriorityTicket } from '../ValueObjects/PriorityTicket';
 import { Tag } from '../ValueObjects/TagTicket';

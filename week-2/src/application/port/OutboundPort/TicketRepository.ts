@@ -1,4 +1,4 @@
-import { Ticket } from '../../../domain/ticket';
+import { Ticket } from '../../../domain/entity/ticket';
 
 export interface TicketRepository {
     create(ticket: Ticket): Promise<void>;
