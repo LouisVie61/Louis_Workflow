@@ -7,24 +7,33 @@ import { TicketRepository } from './port/OutboundPort/TicketRepository';
 import { TicketService } from '../domain/Services/TicketService';
 
 export class TicketUseCaseImpl implements TicketUseCase {
-    private readonly ticketService: TicketService;
+    constructor(
+        private readonly ticketRepository: TicketRepository,
+        private readonly ticketService: TicketService
+    ) {}
 
-    constructor(private readonly ticketRepository: TicketRepository) {
-        this.ticketService = new TicketService();
-    }
-
-    async createTicket(title: string, description: string, status: StatusTicket, priority: PriorityTicket, tags: Tag[]): Promise<Ticket> {
+    async createTicket(title: string, description: string, status: string, priority: string, tags: string[]): Promise<Ticket> {
         const allTickets = await this.ticketRepository.findAll();
         const id = this.ticketService.generateId(allTickets);
-        const ticket = new Ticket(id, title, description, status, priority, tags);
+        const ticket = new Ticket(
+            id, title, description,
+            new StatusTicket(status),
+            new PriorityTicket(priority),
+            tags.map(t => new Tag(t))
+        );
         this.ticketService.applyBusinessRules(ticket);
         await this.ticketRepository.create(ticket);
         return ticket;
     }
 
-    async filterTickets(status?: StatusTicket, priority?: PriorityTicket, tags?: Tag[]): Promise<Ticket[]> {
+    async filterTickets(status?: string, priority?: string, tags?: string[]): Promise<Ticket[]> {
         const allTickets = await this.ticketRepository.findAll();
-        return this.ticketService.filterTickets(allTickets, status, priority, tags);
+        return this.ticketService.filterTickets(
+            allTickets,
+            status ? new StatusTicket(status) : undefined,
+            priority ? new PriorityTicket(priority) : undefined,
+            tags ? tags.map(t => new Tag(t)) : undefined
+        );
     }
 
     async findTicketById(id: number): Promise<Ticket> {
@@ -33,15 +42,15 @@ export class TicketUseCaseImpl implements TicketUseCase {
         return ticket;
     }
 
-    async updateTicket(id: number, status?: StatusTicket, priority?: PriorityTicket): Promise<void> {
+    async updateTicket(id: number, status?: string, priority?: string): Promise<void> {
         const ticket = await this.ticketRepository.findById(id);
         if (!ticket) throw new Error(`Ticket #${id} not found`);
-        if (status) ticket.updateStatus(status);
-        if (priority) ticket.updatePriority(priority);
+        if (status) ticket.updateStatus(new StatusTicket(status));
+        if (priority) ticket.updatePriority(new PriorityTicket(priority));
         await this.ticketRepository.update(ticket);
     }
 
     async listAllTickets(): Promise<Ticket[]> {
-        return await this.ticketRepository.findAll();
+        return this.ticketRepository.findAll();
     }
 }

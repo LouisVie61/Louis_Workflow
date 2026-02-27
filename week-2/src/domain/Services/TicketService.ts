@@ -18,10 +18,4 @@ export class TicketService {
     filterTickets(tickets: Ticket[], status?: StatusTicket, priority?: PriorityTicket, tags?: Tag[]): Ticket[] {
         return tickets.filter(ticket => ticket.matchesFilters(status, priority, tags));
     }
-
-    validateStatusTransition(ticket: Ticket, newStatus: StatusTicket): void {
-        if (ticket.status.getValue() === StatusTicket.CLOSED && newStatus.getValue() === StatusTicket.OPEN) {
-            throw new Error("Cannot reopen a closed ticket");
-        }
-    }
 }

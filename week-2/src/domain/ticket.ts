@@ -1,4 +1,3 @@
-// src/domain/ticket.ts
 import { StatusTicket } from './ValueObjects/StatusTicket';
 import { PriorityTicket } from './ValueObjects/PriorityTicket';
 import { Tag } from './ValueObjects/TagTicket';

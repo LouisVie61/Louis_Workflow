@@ -1,8 +1,5 @@
 import { TicketUseCase } from "../../application/port/InboundPort/TicketUseCase";
 import { TicketPresenters } from "../../application/port/OutboundPort/TicketPresenters";
-import { StatusTicket } from "../../domain/ValueObjects/StatusTicket";
-import { PriorityTicket } from "../../domain/ValueObjects/PriorityTicket";
-import { Tag } from "../../domain/ValueObjects/TagTicket";
 
 export class CLIAdapter {
   constructor(
@@ -29,7 +26,7 @@ export class CLIAdapter {
             await this.handleUpdate(rest);
             break;
           default:
-            console.log("Commands: create | list | show <id> | update <id>");
+            console.log(this.presenter.presentSuccess("Commands: create | list | show <id> | update <id>"));
         }
       }
     } catch (err) {
@@ -45,13 +42,12 @@ export class CLIAdapter {
       return;
     }
 
-    const tags = tagsStr ? tagsStr.split(",").map(t => new Tag(t)) : [];
+    const tags = tagsStr ? tagsStr.split(",") : [];
     const ticket = await this.useCase.createTicket(
-       title,
-       desc,
-       new StatusTicket(status ?? "OPEN"),
-       new PriorityTicket(priority ?? "MEDIUM"),
-       tags
+      title, desc,
+      status ?? "OPEN",
+      priority ?? "MEDIUM",
+      tags
     );
     console.log(this.presenter.presentSuccess(`Created ticket #${ticket.id}`));
   }
@@ -76,9 +72,9 @@ export class CLIAdapter {
 
     const statusIdx = args.indexOf("--status");
     const priorityIdx = args.indexOf("--priority");
-    const status = statusIdx !== -1 ? new StatusTicket(args[statusIdx + 1]) : undefined;
-    const priority = priorityIdx !== -1 ? new PriorityTicket(args[priorityIdx + 1]) : undefined;
-    
+    const status = statusIdx !== -1 ? args[statusIdx + 1] : undefined;
+    const priority = priorityIdx !== -1 ? args[priorityIdx + 1] : undefined;
+
     if (!status && !priority) {
       console.log('Nothing to update. Use --status or --priority');
       return;

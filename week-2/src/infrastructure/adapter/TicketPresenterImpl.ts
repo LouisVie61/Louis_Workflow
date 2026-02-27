@@ -25,6 +25,6 @@ export class TicketPresenterImpl implements TicketPresenters {
   }
 
   presentSuccess(message: string): string {
-    return `${message}`;
+    return message;
   }
 }
