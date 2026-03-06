@@ -47,7 +47,7 @@ POST: https://personal121.odoo.com/jsonrpc
     "args": [
       "personal121",
       2,
-      "Tan568993993",
+      "YOUR_PASSWORD",
       "helpdesk.ticket",
       "create",
       [
