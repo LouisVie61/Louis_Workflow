@@ -19,7 +19,7 @@ export class Container {
             process.env.ODOO_URL ?? "",
             process.env.ODOO_DB ?? "",
             process.env.ODOO_USERNAME ?? "",
-            process.env.ODOO_API_KEY ?? "",
+            process.env.ODOO_PASSWORD ?? "",
             new HTTPAdapter()
         );
         const odooUseCase = new OdooTicketUseCaseImpl(odooRepo);

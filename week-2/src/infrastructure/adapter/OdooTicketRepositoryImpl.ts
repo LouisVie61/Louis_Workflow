@@ -35,20 +35,28 @@ export class OdooTicketRepositoryImpl implements OdooTicketRepository {
 
     private async search(domain: any[]): Promise<OdooTicketDTO[]> {
         await this.ensureAuthenticated();
-        const res = await this.http.post(`${this.baseUrl}/web/dataset/call_kw`, {
-            jsonrpc: "2.0", method: "call", id: 1,
+        const res = await this.http.post(`${this.baseUrl}/jsonrpc`, {
+            jsonrpc: "2.0",
+            method: "call",
             params: {
-                model: "helpdesk.ticket", method: "search_read",
-                args: [domain],
-                kwargs: {
-                    fields: ["id", "name", "description", "stage_id", "priority", "tag_ids", "time_spent", "create_date", "partner_name", "team_id"],
-                    context: { uid: this.uid },
-                },
+                service: "object",
+                method: "execute_kw",
+                args: [
+                    this.db,
+                    this.uid,
+                    this.password,
+                    "helpdesk.ticket",
+                    "search_read",
+                    [domain],
+                    {
+                        fields: ["id", "name", "description", "stage_id", "priority", "tag_ids", "close_hours", "create_date", "partner_name", "team_id"],
+                    },
+                ],
             },
         });
+        if (res.error) throw new Error(res.error.data?.message ?? "Odoo error");
         return (res.result as any[]).map(OdooTicketRepositoryImpl.mapToDTO);
     }
-
     async listTickets(): Promise<OdooTicketDTO[]> {
         return this.search([]);
     }
@@ -77,7 +85,7 @@ export class OdooTicketRepositoryImpl implements OdooTicketRepository {
             status: t.stage_id?.[1] ?? "Unknown",
             priority: t.priority === "2" ? "HIGH" : t.priority === "1" ? "MEDIUM" : "LOW",
             tags: (t.tag_ids ?? []).map(String),
-            timeSpent: t.time_spent ?? 0,
+            timeSpent: t.close_hours ?? 0,
             createDate: t.create_date ?? "",
             partnerName: t.partner_name ?? "",
             teamId: t.team_id?.[1] ?? "",
