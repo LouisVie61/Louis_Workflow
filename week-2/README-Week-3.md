@@ -35,30 +35,6 @@ npx ts-node index.ts tickets show <id>
 CLI_command -> CLIAdapter.run() -> OdooTicketUseCase -> OdooTicketUseCaseImpl -> OdooTicketRepository -> IHTTPAdapter -> HTTPAdapter -> Odoo JSON-RPC API
 ```
 
-## Chỉnh sửa field của Odoo: 
-Hãy dùng postman
-Method Post:
-```bash
-{
-  "jsonrpc": "2.0",
-  "method": "call",
-  "params": {
-    "service": "object",
-    "method": "execute_kw",
-    "args": [
-      "personal121",
-      2,
-      "YOUR_PASSWORD",
-      "helpdesk.ticket",
-      "fields_get",
-      [],
-      {
-        "attributes": ["string", "type"]
-      }
-    ]
-  }
-}
-```
 ## Create ticket via Postman
 POST: https://personal121.odoo.com/jsonrpc
 ```bash
