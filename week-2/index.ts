@@ -1,3 +1,4 @@
+import "dotenv/config";
 import { Container } from "./src/infrastructure/di/Container";
 
 const cli = Container.buildCLI();
