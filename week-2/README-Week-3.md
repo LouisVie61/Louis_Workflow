@@ -59,3 +59,31 @@ Method Post:
   }
 }
 ```
+## Create ticket via Postman
+POST: https://personal121.odoo.com/jsonrpc
+```bash
+{
+  "jsonrpc": "2.0",
+  "method": "call",
+  "params": {
+    "service": "object",
+    "method": "execute_kw",
+    "args": [
+      "personal121",
+      2,
+      "Tan568993993",
+      "helpdesk.ticket",
+      "create",
+      [
+        {
+          "name": "Testing",
+          "description": "Testing.",
+          "stage_id": 1,
+          "priority": "2",
+          "partner_name": "MindX Corp"
+        }
+      ]
+    ]
+  }
+}
+```
