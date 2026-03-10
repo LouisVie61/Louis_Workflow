@@ -19,6 +19,7 @@ export class OdooTicketPresenterImpl implements OdooTicketPresenters {
             `Tags:        ${ticket.tags.join(", ") || "none"}`,
             `Time Spent:  ${ticket.timeSpent}h`,
             `Created:     ${ticket.createDate}`,
+            `Updated:     ${ticket.udpateDate}`,
             `Customer:    ${ticket.partnerName}`,
             `Team:        ${ticket.teamId}`,
         ].join("\n");

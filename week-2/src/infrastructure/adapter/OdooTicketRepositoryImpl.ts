@@ -49,7 +49,7 @@ export class OdooTicketRepositoryImpl implements OdooTicketRepository {
                     "search_read",
                     [domain],
                     {
-                        fields: ["id", "name", "description", "stage_id", "priority", "tag_ids", "close_hours", "create_date", "partner_name", "team_id"],
+                        fields: ["id", "name", "description", "stage_id", "priority", "tag_ids", "close_hours", "create_date", "write_date", "partner_name", "team_id"],
                     },
                 ],
             },
@@ -87,6 +87,7 @@ export class OdooTicketRepositoryImpl implements OdooTicketRepository {
             tags: (t.tag_ids ?? []).map(String),
             timeSpent: t.close_hours ?? 0,
             createDate: t.create_date ?? "",
+            udpateDate: t.write_date ?? "",
             partnerName: t.partner_name ?? "",
             teamId: t.team_id?.[1] ?? "",
         };
