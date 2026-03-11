@@ -29,6 +29,9 @@ npx ts-node index.ts tickets unprocessed
 ### Xem chi tiết ticket
 npx ts-node index.ts tickets show <id>
 
+### Update ticket
+npx ts-node index.ts tickets update <id> [status] [priority]
+
 ## Data flow
 
 ```bash
