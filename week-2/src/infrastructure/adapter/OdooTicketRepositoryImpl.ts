@@ -110,7 +110,7 @@ export class OdooTicketRepositoryImpl implements OdooTicketRepository {
 
         if (Object.keys(updates).length === 0) return;
 
-        await this.execute("helpdesk.ticket", "write", [[id], updates]);
+        await this.execute("helpdesk.ticket", "write", [[[id], updates]]);
     }
 
     private static mapToDTO(t: any, tagMap: Record<number, string>): OdooTicketDTO {
