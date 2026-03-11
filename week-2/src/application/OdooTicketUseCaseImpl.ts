@@ -20,4 +20,8 @@ export class OdooTicketUseCaseImpl implements OdooTicketUseCase {
     getTicketById(id: number): Promise<OdooTicketDTO> {
         return this.repo.getTicketById(id);
     }
+
+    updateTicket(id: number, status?: string, priority?: string): Promise<void> {
+        return this.repo.updateTicket(id, status, priority);
+    }
 }

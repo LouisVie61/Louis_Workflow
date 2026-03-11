@@ -37,9 +37,16 @@ export class CLIAdapter {
                         }
                         console.log(this.odooPresenter.presentTicketDetail(await this.odooUseCase.getTicketById(id)));
                         break;
-                    case "update":
-                        await this.handleUpdate(rest);
+                    case "update": {
+                        const ticketId = Number(rest[0]);
+                        if (!rest[0] || isNaN(ticketId)) {
+                            console.log('Usage: tickets update <id> [status] [priority]');
+                            return;
+                        }
+                        await this.odooUseCase.updateTicket(ticketId, rest[1], rest[2]);
+                        console.log(this.odooPresenter.presentTicketDetail(await this.odooUseCase.getTicketById(ticketId)));
                         break;
+                    }
                     default:
                         console.log(this.presenter.presentSuccess(
                             "Commands: create | list | new | unprocessed | show <id> | update <id>"
@@ -47,8 +54,7 @@ export class CLIAdapter {
                 }
             }
         } catch (err) {
-            const isOdooCommand = ["list", "new", "unprocessed", "show"].includes(subCommand);
-            if (isOdooCommand) {
+                const isOdooCommand = ["list", "new", "unprocessed", "show", "update"].includes(subCommand);            if (isOdooCommand) {
                 console.log(this.odooPresenter.presentError(err as Error));
             } else {
                 console.log(this.presenter.presentError(err as Error));
@@ -74,6 +80,11 @@ export class CLIAdapter {
         console.log(this.presenter.presentSuccess(`Created ticket #${ticket.id}`));
     }
 
+    /**
+     * Update ticket stored in file
+     * @param args 
+     * @returns Updated message or error 
+     */
     private async handleUpdate(args: string[]): Promise<void> {
         const id = Number(args[0]);
 

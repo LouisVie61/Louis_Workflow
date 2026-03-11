@@ -33,7 +33,7 @@ export class OdooTicketRepositoryImpl implements OdooTicketRepository {
         }
     }
 
-    private async search(domain: any[]): Promise<OdooTicketDTO[]> {
+    private async execute(model: string, method: string, args: any[]): Promise<any> {
         await this.ensureAuthenticated();
         const res = await this.http.post(`${this.baseUrl}/jsonrpc`, {
             jsonrpc: "2.0",
@@ -41,22 +41,37 @@ export class OdooTicketRepositoryImpl implements OdooTicketRepository {
             params: {
                 service: "object",
                 method: "execute_kw",
-                args: [
-                    this.db,
-                    this.uid,
-                    this.password,
-                    "helpdesk.ticket",
-                    "search_read",
-                    [domain],
-                    {
-                        fields: ["id", "name", "description", "stage_id", "priority", "tag_ids", "close_hours", "create_date", "write_date", "partner_name", "team_id"],
-                    },
-                ],
-            },
+                args: [this.db, this.uid, this.password, model, method, ...args],
+            }
         });
         if (res.error) throw new Error(res.error.data?.message ?? "Odoo error");
-        return (res.result as any[]).map(OdooTicketRepositoryImpl.mapToDTO);
+        return res.result;
     }
+
+    private async search(domain: any[]): Promise<OdooTicketDTO[]> {
+        const result = await this.execute("helpdesk.ticket", "search_read", [
+            [domain],
+            { fields: ["id", "name", "description", "stage_id", "priority", "tag_ids", "close_hours", "create_date", "write_date", "partner_name", "team_id"] },
+        ]);
+
+        const allTagIds: number[] = [...new Set(
+            (result as any[]).flatMap((t: any) => t.tag_ids ?? [])
+        )];
+
+        const tagMap: Record<number, string> = {};
+        if (allTagIds.length > 0) {
+            const tags = await this.execute("helpdesk.tag", "read", [
+                [allTagIds],
+                { fields: ["id", "name"] },
+            ]);
+            for (const tag of tags) {
+                tagMap[tag.id] = tag.name;
+            }
+        }
+
+        return (result as any[]).map(t => OdooTicketRepositoryImpl.mapToDTO(t, tagMap));
+    }
+
     async listTickets(): Promise<OdooTicketDTO[]> {
         return this.search([]);
     }
@@ -77,17 +92,38 @@ export class OdooTicketRepositoryImpl implements OdooTicketRepository {
         return results[0];
     }
 
-    private static mapToDTO(t: any): OdooTicketDTO {
+    async updateTicket(id: number, status?: string, priority?: string): Promise<void> {
+        const updates: any = {};
+
+        if (status) {
+            const stages = await this.execute("helpdesk.stage", "search_read", [
+                [[["name", "=", status]]],
+                { fields: ["id"], limit: 1 },
+            ]);
+            if (!stages.length) throw new Error(`Stage "${status}" not found`);
+            updates.stage_id = stages[0].id;
+        }
+
+        if (priority) {
+            updates.priority = priority === "HIGH" ? "2" : priority === "MEDIUM" ? "1" : "0";
+        }
+
+        if (Object.keys(updates).length === 0) return;
+
+        await this.execute("helpdesk.ticket", "write", [[id], updates]);
+    }
+
+    private static mapToDTO(t: any, tagMap: Record<number, string>): OdooTicketDTO {
         return {
             id: t.id,
             title: t.name,
             description: t.description ?? "",
             status: t.stage_id?.[1] ?? "Unknown",
             priority: t.priority === "2" ? "HIGH" : t.priority === "1" ? "MEDIUM" : "LOW",
-            tags: (t.tag_ids ?? []).map(String),
+            tags: (t.tag_ids ?? []).map((id: number) => tagMap[id] ?? String(id)),
             timeSpent: t.close_hours ?? 0,
             createDate: t.create_date ?? "",
-            udpateDate: t.write_date ?? "",
+            updateDate: t.write_date ?? "",
             partnerName: t.partner_name ?? "",
             teamId: t.team_id?.[1] ?? "",
         };

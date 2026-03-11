@@ -7,7 +7,7 @@ export interface OdooTicketDTO {
     tags: string[];
     timeSpent: number;
     createDate: string;
-    udpateDate: string;
+    updateDate: string;
     partnerName: string;
     teamId: string;
 };
