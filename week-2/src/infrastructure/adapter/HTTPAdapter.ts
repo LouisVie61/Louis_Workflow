@@ -10,8 +10,8 @@ export class HTTPAdapter implements IHTTPAdapter {
       const lib = urlObj.protocol === 'https:' ? https : http;
       const options = {
         hostname: urlObj.hostname,
-        port: urlObj.port,
-        path: urlObj.pathname,
+        port: urlObj.port || (urlObj.protocol === 'https:' ? 443 : 80),
+        path: urlObj.pathname + urlObj.search,
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -22,6 +22,12 @@ export class HTTPAdapter implements IHTTPAdapter {
         let raw = '';
         res.on('data', chunk => raw += chunk);
         res.on('end', () => {
+          const contentType = res.headers['content-type'];
+          if (!contentType?.includes('application/json')) {
+            console.error('Non-JSON response:', raw);
+            return reject(new Error('Expected JSON but got non-JSON response'));
+          }
+            
           try { resolve(JSON.parse(raw)); }
           catch (e) { reject(e); }
         });

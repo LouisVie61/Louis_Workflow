@@ -21,6 +21,7 @@ export class OdooTicketPresenterImpl implements OdooTicketPresenters {
             `Created:     ${ticket.createDate}`,
             `Updated:     ${ticket.updateDate}`,
             `Customer:    ${ticket.partnerName}`,
+            'Email:       ' + (ticket.partnerEmail || "N/A"),
             `Team:        ${ticket.teamId}`,
         ].join("\n");
     }

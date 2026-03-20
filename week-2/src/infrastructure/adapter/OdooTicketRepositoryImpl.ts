@@ -51,7 +51,7 @@ export class OdooTicketRepositoryImpl implements OdooTicketRepository {
     private async search(domain: any[]): Promise<OdooTicketDTO[]> {
         const result = await this.execute("helpdesk.ticket", "search_read", [
             [domain],
-            { fields: ["id", "name", "description", "stage_id", "priority", "tag_ids", "close_hours", "create_date", "write_date", "partner_name", "team_id"] },
+            { fields: ["id", "name", "description", "stage_id", "priority", "tag_ids", "close_hours", "create_date", "write_date", "partner_id", "partner_name", "partner_email", "team_id"] },
         ]);
 
         const allTagIds: number[] = [...new Set(
@@ -113,6 +113,19 @@ export class OdooTicketRepositoryImpl implements OdooTicketRepository {
         await this.execute("helpdesk.ticket", "write", [[[id], updates]]);
     }
 
+    async getPartnerStatus(partnerId: number): Promise<string> {
+        const partners = await this.execute("res.partner", "search_read", [
+            [[["id", "=", partnerId]]],
+            { fields: ["id", "name", "active"], limit: 1 },
+        ]);
+
+        if (!partners.length) throw new Error(`Partner #${partnerId} not found`);
+
+        const partner = partners[0];
+        return partner.active ? "active" : "deactive";
+    }
+
+
     private static mapToDTO(t: any, tagMap: Record<number, string>): OdooTicketDTO {
         return {
             id: t.id,
@@ -124,7 +137,9 @@ export class OdooTicketRepositoryImpl implements OdooTicketRepository {
             timeSpent: t.close_hours ?? 0,
             createDate: t.create_date ?? "",
             updateDate: t.write_date ?? "",
+            partnerId: Array.isArray(t.partner_id) ? t.partner_id[0] : null,
             partnerName: t.partner_name ?? "",
+            partnerEmail: t.partner_email ?? undefined,
             teamId: t.team_id?.[1] ?? "",
         };
     }

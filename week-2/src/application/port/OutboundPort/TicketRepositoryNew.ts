@@ -6,4 +6,5 @@ export interface OdooTicketRepository {
     getUnprocessedTickets(): Promise<OdooTicketDTO[]>;
     getTicketById(id: number): Promise<OdooTicketDTO>;
     updateTicket(id: number, status?: string, priority?: string): Promise<void>;
+    getPartnerStatus(partnerId: number): Promise<string>;
 }
